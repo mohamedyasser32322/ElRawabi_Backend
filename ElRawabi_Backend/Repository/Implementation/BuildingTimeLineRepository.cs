@@ -20,7 +20,7 @@ namespace ElRawabi_Backend.Repository.Implementation
 
         public async Task<BuildingTimeLine?> GetByIdAsync(int id)
         { 
-            return await _context.BuildingsTimeLine.FirstOrDefaultAsync(bt => bt.Id == id);
+            return await _context.BuildingsTimeLine.FirstOrDefaultAsync(bt => bt.Id == id && !bt.IsDeleted);
         }
 
         public async Task<BuildingTimeLine> AddAsync(BuildingTimeLine BuildingTimeLine)
