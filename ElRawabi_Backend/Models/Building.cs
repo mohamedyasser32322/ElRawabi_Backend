@@ -12,8 +12,7 @@ namespace ElRawabi_Backend.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime LastUpdatedAt { get; set; }
         public bool IsDeleted { get; set; } = false;
-
-
+        public DateTime DeliveryDate { get; set; }
         public Project Project { get; set; }
         public int ProjectId { get; set; }
         public ICollection<Apartment> Apartments { get; set; } = new List<Apartment>();

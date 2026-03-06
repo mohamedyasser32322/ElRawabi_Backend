@@ -48,5 +48,16 @@ namespace ElRawabi_Backend.Repository.Implementation
             await _context.SaveChangesAsync();
             return Apartment;
         }
+            
+        public async Task<Apartment?> GetApartmentWithDetailsAsync(int apartmentId)
+        {
+            return await _context.Apartments
+                .AsNoTracking()
+                .Include(a => a.User)
+                .Include(a => a.Building)
+                    .ThenInclude(b => b.Project)
+                .Include(a => a.Building.buildingTimeLines)
+                .FirstOrDefaultAsync(a => a.Id == apartmentId);
+        }
     }
 }

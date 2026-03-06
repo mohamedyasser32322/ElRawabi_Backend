@@ -13,5 +13,7 @@ namespace ElRawabi_Backend.Dtos.BuildingTimeLine
         [StringLength(1000)]
         public string Description { get; set; }
         public BuildingStage Stage { get; set; }
+        public DateTime CompletedAt { get; set; }
+        public bool? IsCompleted { get; set; }
     }
 }

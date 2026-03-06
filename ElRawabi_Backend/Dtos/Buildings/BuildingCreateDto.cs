@@ -10,5 +10,7 @@ namespace ElRawabi_Backend.Dtos.Buildings
         public int TotalFloors { get; set; }
         [Required]
         public int ProjectId { get; set; }
+        [Required]
+        public DateTime DeliveryDate { get; set; }
     }
 }
