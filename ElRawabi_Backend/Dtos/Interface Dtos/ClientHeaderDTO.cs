@@ -9,8 +9,8 @@ namespace ElRawabi_Backend.Dtos.Interface_Dtos
         public string? FloorNumber {  get; set; }
         public string? UnitNumber { get; set; }
         public string? DeliveryDate { get; set; }
-        public bool? AccountStatus { get; set; }
+        public bool AccountStatus { get; set; }
 
-        public ICollection<BuildingTimeLineReadDto>? BuildingTimeLineReadDtos { get; set; }
+        public List<BuildingTimeLineReadDto>? BuildingTimeLineReadDtos { get; set; } = new();
     }
 }

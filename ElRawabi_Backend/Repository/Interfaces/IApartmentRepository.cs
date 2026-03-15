@@ -11,5 +11,6 @@ namespace ElRawabi_Backend.Repository.Interfaces
         Task<Apartment> AddAsync(Apartment Apartment);
         Task<Apartment> UpdateAsync(Apartment Apartment);
         Task<Apartment?> GetApartmentWithDetailsAsync(int apartmentId);
+        Task<Apartment?> GetApartmentByEmailAsync(string email);
     }
 }

@@ -7,6 +7,8 @@ namespace ElRawabi_Backend.Dtos.Buildings
         public int Id { get; set; }
         public string? BuildingNumber { get; set; }
         public int TotalFloors { get; set; }
+        public DateTime DeliveryDate { get; set; }
+
         public int ProjectId { get; set; }
     }
 }

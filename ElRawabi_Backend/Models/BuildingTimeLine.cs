@@ -21,9 +21,9 @@ namespace ElRawabi_Backend.Models
         public string? Description { get; set; }
         [Required]
         public BuildingStage Stage { get; set; } = BuildingStage.Stage1;
-        public bool? IsCompleted { get; set; }
-        public DateTime CompletedAt { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public bool? IsCompleted { get; set; } = false;
+        public DateTime? CompletedAt { get; set; }
+        public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
         public bool IsDeleted { get; set; } = false;
 

@@ -50,12 +50,41 @@ namespace ElRawabi_Backend.Dtos
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
             // Building TimeLine Mapping
-            CreateMap<ElRawabi_Backend.Models.BuildingTimeLine, BuildingTimeLineReadDto>()
-                .ForMember(dest => dest.StageName, opt => opt.MapFrom(src => src.Stage.ToString()))
-                .ForMember(dest => dest.BuildingName, opt => opt.MapFrom(src => src.Building != null ? src.Building.BuildingNumber : "N/A"));
-            CreateMap<BuildingTimeLineCreateDto, ElRawabi_Backend.Models.BuildingTimeLine>();
-            CreateMap<BuildingTimeLineUpdateDto, ElRawabi_Backend.Models.BuildingTimeLine>()
+            CreateMap<ElRawabi_Backend.Models.Apartment, ClientHeaderDTO>()
+                .ForMember(dest => dest.ClientName, opt => opt.MapFrom(src => src.User.FullName))
+                .ForMember(dest => dest.ProjectName, opt => opt.MapFrom(src => src.Building.Project.Name))
+                .ForMember(dest => dest.UnitNumber, opt => opt.MapFrom(src => src.ApartmentNumber))
+                .ForMember(dest => dest.FloorNumber, opt => opt.MapFrom(src => src.FloorNumber.ToString()))
+                .ForMember(dest => dest.AccountStatus, opt => opt.MapFrom(src => src.User.IsActive))
+                .ForMember(dest => dest.DeliveryDate, opt => opt.MapFrom(src => src.Building.DeliveryDate.ToString("yyyy/MM/dd")))
+                .ForMember(dest => dest.BuildingTimeLineReadDtos, opt => opt.Ignore());
+
+            
+
+
+        CreateMap<Models.BuildingTimeLine, BuildingTimeLineReadDto>()
+                .ForMember(dest => dest.StageNumber, opt => opt.MapFrom(src => (int)src.Stage))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.IsCompleted == true ? "active" : "current"))
+                .ForMember(dest => dest.DateText, opt => opt.MapFrom(src => src.IsCompleted == true && src.CompletedAt.HasValue? src.CompletedAt.Value.ToString("yyyy/MM/dd"): "قيد التنفيذ"))
+                .ForMember(dest => dest.StageDisplayName, opt => opt.MapFrom(src => GetArabicStageName(src.Stage)));
+                      CreateMap<BuildingTimeLineCreateDto, Models.BuildingTimeLine>();
+
+            CreateMap<BuildingTimeLineUpdateDto, Models.BuildingTimeLine>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+        }
+        private string GetArabicStageName(BuildingStage stage)
+        {
+            return stage switch
+            {
+                BuildingStage.Stage1 => "توقيع العقود",
+                BuildingStage.Stage2 => "المخططات والتراخيص",
+                BuildingStage.Stage3 => "الأساسات",
+                BuildingStage.Stage4 => "الهيكل الإنشائي",
+                BuildingStage.Stage5 => "اللياسة والكهرباء",
+                BuildingStage.Stage6 => "التشطيبات النهائية",
+                BuildingStage.Stage7 => "الاستلام",
+                _ => "مرحلة غير معروفة"
+            };
         }
     }
 }

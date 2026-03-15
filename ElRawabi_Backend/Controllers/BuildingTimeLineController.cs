@@ -29,21 +29,24 @@ namespace ElRawabi_Backend.Controllers
         public async Task<IActionResult> Create(BuildingTimeLineCreateDto dto)
         {
             var result = await _buildingTimeLineService.AddBuildingTimeLineAsync(dto);
-            return Ok(new { message = result });
+
+            if (result != "Success")
+            {
+                return BadRequest(new { message = result });
+            }
+
+            return Ok(new { message = "تمت إضافة المرحلة بنجاح" });
         }
 
         [HttpPut("Update-TimeLine-Info")]
         public async Task<IActionResult> Update(BuildingTimeLineUpdateDto dto)
         {
-            try
-            {
-                var updatedTimeLine = await _buildingTimeLineService.UpdateBuildingTimeLineAsync(dto);
-                return Ok(updatedTimeLine);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var updatedTimeLine = await _buildingTimeLineService.UpdateBuildingTimeLineAsync(dto);
+
+            if (updatedTimeLine == null)
+                return NotFound(new { message = "المرحلة غير موجودة" });
+
+            return Ok(updatedTimeLine);
         }
 
         [HttpDelete("Remove-TimeLine/{id}")]
