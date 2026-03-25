@@ -15,7 +15,10 @@ namespace ElRawabi_Backend.Repository.Implementation
 
         public async Task<List<Building>> GetAllAsync()
         {
-            return await _context.Buildings.Where(b => !b.IsDeleted).ToListAsync();
+            return await _context.Buildings
+                .Where(b => !b.IsDeleted)
+                .Include(b => b.Project)
+                .ToListAsync();
         }
 
         public async Task<Building?> GetByIdAsync(int id)
@@ -29,6 +32,7 @@ namespace ElRawabi_Backend.Repository.Implementation
         {
             return await _context.Buildings
                 .Where(b => b.ProjectId == projectId && !b.IsDeleted)
+                .Include(b => b.Project)
                 .ToListAsync();
         }
 
