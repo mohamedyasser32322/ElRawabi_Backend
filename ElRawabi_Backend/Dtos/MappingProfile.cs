@@ -36,7 +36,8 @@ namespace ElRawabi_Backend.Dtos
                 .ForAllMembers(opts => opts.Condition((src , dest , srcMember) => srcMember != null));
 
             // Buildings Mapping
-            CreateMap<Building, AllBuildingsDto>();
+            CreateMap<Building, AllBuildingsDto>()
+                .ForMember(dest => dest.ProjectName, opt => opt.MapFrom(src => src.Project.Name));
             CreateMap<Building, BuildingReadDto>();
             CreateMap<BuildingCreateDto, Building>();
             CreateMap<BuildingUpdateDto, Building>()
@@ -51,11 +52,11 @@ namespace ElRawabi_Backend.Dtos
 
             // Building TimeLine Mapping
             CreateMap<ElRawabi_Backend.Models.Apartment, ClientHeaderDTO>()
-                .ForMember(dest => dest.ClientName, opt => opt.MapFrom(src => src.User.FullName))
+                .ForMember(dest => dest.ClientName, opt => opt.MapFrom(src => src.Client.FullName))
                 .ForMember(dest => dest.ProjectName, opt => opt.MapFrom(src => src.Building.Project.Name))
                 .ForMember(dest => dest.UnitNumber, opt => opt.MapFrom(src => src.ApartmentNumber))
                 .ForMember(dest => dest.FloorNumber, opt => opt.MapFrom(src => src.FloorNumber.ToString()))
-                .ForMember(dest => dest.AccountStatus, opt => opt.MapFrom(src => src.User.IsActive))
+                .ForMember(dest => dest.AccountStatus, opt => opt.MapFrom(src => src.Client.IsActive))
                 .ForMember(dest => dest.DeliveryDate, opt => opt.MapFrom(src => src.Building.DeliveryDate.ToString("yyyy/MM/dd")))
                 .ForMember(dest => dest.BuildingTimeLineReadDtos, opt => opt.Ignore());
 

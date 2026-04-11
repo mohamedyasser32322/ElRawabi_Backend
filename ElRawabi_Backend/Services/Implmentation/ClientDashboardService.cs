@@ -69,12 +69,12 @@ namespace ElRawabi_Backend.Services.Implmentation
 
             return new ClientHeaderDTO
             {
-                ClientName = apartment.User?.FullName,
+                ClientName = apartment.Client?.FullName,
                 ProjectName = apartment.Building?.Project?.Name,
                 FloorNumber = apartment.FloorNumber.ToString(),
                 UnitNumber = "شقة " + apartment.ApartmentNumber,
                 DeliveryDate = apartment.Building?.DeliveryDate.ToString("yyyy/MM/dd"),
-                AccountStatus = apartment.User?.IsActive ?? false,
+                AccountStatus = apartment.Client?.IsActive ?? false,
                 BuildingTimeLineReadDtos = timelineDtos
             };
         }

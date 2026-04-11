@@ -29,7 +29,7 @@ namespace ElRawabi_Backend.Models
 
         public Building Building { get; set; }
         public int BuildingId { get; set; }
-        public User? User { get; set; }
+        public User? Client { get; set; }
         public int? ClientId { get; set; }
     }
 }

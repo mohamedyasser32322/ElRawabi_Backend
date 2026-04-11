@@ -1,4 +1,5 @@
 ﻿using ElRawabi_Backend.Data;
+using ElRawabi_Backend.Dtos.BuildingTimeLine;
 using ElRawabi_Backend.Models;
 using ElRawabi_Backend.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +36,15 @@ namespace ElRawabi_Backend.Repository.Implementation
             _context.BuildingsTimeLine.Update(BuildingTimeLine);
             await _context.SaveChangesAsync();
             return BuildingTimeLine;
+        }
+
+        public async Task<List<BuildingTimeLine>> GetBuildingTimeLinesByBuildingIdAsync(int buildingId)
+        {
+            
+            var timeLines = await _context.BuildingsTimeLine
+                .Where(bt => bt.BuildingId == buildingId)
+                .ToListAsync();
+            return timeLines;
         }
     }
 }

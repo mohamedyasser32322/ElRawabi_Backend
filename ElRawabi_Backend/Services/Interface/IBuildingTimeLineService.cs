@@ -8,5 +8,6 @@ namespace ElRawabi_Backend.Services.Interface
         Task<string> AddBuildingTimeLineAsync(BuildingTimeLineCreateDto buildingTimeLineCreateDto);
         Task<BuildingTimeLineReadDto> UpdateBuildingTimeLineAsync(BuildingTimeLineUpdateDto buildingTimeLineUpdateDto);
         Task<bool> DeleteBuildingTimeLineAsync(int id);
+        Task<List<BuildingTimeLineReadDto>> GetBuildingTimeLinesByBuildingIdAsync(int buildingId);
     }
 }

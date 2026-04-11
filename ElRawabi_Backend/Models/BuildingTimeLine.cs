@@ -15,9 +15,9 @@ namespace ElRawabi_Backend.Models
     public class BuildingTimeLine
     {
         public int Id {  get; set; }
-        [Required,StringLength(200)]
+        [StringLength(200)]
         public string? Title { get; set; }
-        [Required, StringLength(1000)]
+        [StringLength(1000)]
         public string? Description { get; set; }
         [Required]
         public BuildingStage Stage { get; set; } = BuildingStage.Stage1;

@@ -38,6 +38,13 @@ namespace ElRawabi_Backend.Controllers
             return Ok(new { message = "تمت إضافة المرحلة بنجاح" });
         }
 
+        [HttpGet("Get-Building-TimeLines/{buildingId}")]
+        public async Task<IActionResult> GetByBuildingId(int buildingId)
+        {
+            var result = await _buildingTimeLineService.GetBuildingTimeLinesByBuildingIdAsync(buildingId);
+            return Ok(result);
+        }
+
         [HttpPut("Update-TimeLine-Info")]
         public async Task<IActionResult> Update(BuildingTimeLineUpdateDto dto)
         {

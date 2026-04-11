@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ElRawabi_Backend.Dtos.BuildingTimeLine;
 using ElRawabi_Backend.Models;
+using ElRawabi_Backend.Repository.Implementation;
 using ElRawabi_Backend.Repository.Interfaces;
 using ElRawabi_Backend.Services.Interface;
 
@@ -79,5 +80,12 @@ namespace ElRawabi_Backend.Services.Implmentation
             await _buildingTimeLineRepo.UpdateAsync(stage);
             return true;
         }
+
+        public async Task<List<BuildingTimeLineReadDto>> GetBuildingTimeLinesByBuildingIdAsync(int buildingId)
+        {
+            var timeLines = await _buildingTimeLineRepo.GetBuildingTimeLinesByBuildingIdAsync(buildingId);
+            return _mapper.Map<List<BuildingTimeLineReadDto>>(timeLines);
+        }
+
     }
 }

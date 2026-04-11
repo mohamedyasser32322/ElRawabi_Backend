@@ -49,7 +49,9 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddDbContext<ElRawabiDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 //Auto Mapper Dtos
-builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddAutoMapper(cfg => {
+    cfg.AddMaps(typeof(Program));
+});
 
 //Jwt 
 builder.Services.AddAuthentication(options => {

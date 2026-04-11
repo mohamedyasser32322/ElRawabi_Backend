@@ -1,4 +1,5 @@
-﻿using ElRawabi_Backend.Models;
+﻿using ElRawabi_Backend.Dtos.BuildingTimeLine;
+using ElRawabi_Backend.Models;
 
 namespace ElRawabi_Backend.Repository.Interfaces
 {
@@ -8,5 +9,6 @@ namespace ElRawabi_Backend.Repository.Interfaces
         Task<BuildingTimeLine?> GetByIdAsync(int id);
         Task<BuildingTimeLine> AddAsync(BuildingTimeLine BuildingTimeLine);
         Task<BuildingTimeLine> UpdateAsync(BuildingTimeLine BuildingTimeLine);
+        Task<List<BuildingTimeLine>> GetBuildingTimeLinesByBuildingIdAsync(int buildingId);
     }
 }

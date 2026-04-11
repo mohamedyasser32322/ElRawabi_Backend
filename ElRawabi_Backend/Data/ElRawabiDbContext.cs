@@ -59,7 +59,7 @@ namespace ElRawabi_Backend.Data
                 .HasForeignKey(bi => bi.BuildingId);
 
             modelBuilder.Entity<Apartment>()
-                .HasOne(a => a.User)
+                .HasOne(a => a.Client)
                 .WithMany(u => u.Apartments)
                 .HasForeignKey(a => a.ClientId)
                 .OnDelete(DeleteBehavior.SetNull);
