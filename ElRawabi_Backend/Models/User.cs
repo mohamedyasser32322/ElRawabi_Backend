@@ -25,8 +25,10 @@ namespace ElRawabi_Backend.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime LastUpdatedAt { get; set; }
         [Required]
-        public bool IsActive { get; set; } = true;
+        public bool IsActive { get; set; } = false;
         public bool IsDeleted { get; set; } = false;
+        public string? PasswordResetToken { get; set; }
+        public DateTime? ResetTokenExpires { get; set; }
 
         public ICollection<Apartment> Apartments { get; set; } = new List<Apartment>();
     }

@@ -9,6 +9,7 @@ namespace ElRawabi_Backend.Dtos.Users
         public string FullName { get; set; } = string.Empty;
 
         [Required, EmailAddress]
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@gmail\.com$", ErrorMessage = "Only Gmail addresses are allowed.")]
         public string Email { get; set; } = string.Empty;
 
         [Required, Phone]

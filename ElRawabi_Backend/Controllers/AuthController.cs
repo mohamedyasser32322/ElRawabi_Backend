@@ -19,11 +19,18 @@ namespace ElRawabi_Backend.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto loginDto)
         {
-            var response = await _authService.LoginAsync(loginDto);
-            if (response == null)
-                return Unauthorized(new { message = "Invalid email or password" });
+            try
+            {
+                var response = await _authService.LoginAsync(loginDto);
+                if (response == null)
+                    return Unauthorized(new { message = "Invalid email or password" });
 
-            return Ok(response);
+                return Ok(response);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
         }
 
         [Authorize]
@@ -50,7 +57,35 @@ namespace ElRawabi_Backend.Controllers
             if (result == "Email already exists")
                 return BadRequest(new { message = result });
 
-            return Ok(new { message = "User registered successfully" });
+            return Ok(new { message = "User registered successfully. Please wait for administrator activation." });
+        }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] string email)
+        {
+            var result = await _authService.ForgotPasswordAsync(email);
+            if (!result) return NotFound(new { message = "Email not found" });
+
+            return Ok(new { message = "Reset link sent to your email" });
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromQuery] string token, [FromBody] string newPassword)
+        {
+            var result = await _authService.ResetPasswordAsync(token, newPassword);
+            if (!result) return BadRequest(new { message = "Invalid or expired token" });
+
+            return Ok(new { message = "Password reset successfully" });
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("activate/{userId}")]
+        public async Task<IActionResult> ActivateUser(int userId)
+        {
+            var result = await _authService.ActivateUserAsync(userId);
+            if (!result) return NotFound(new { message = "User not found" });
+
+            return Ok(new { message = "User activated successfully" });
         }
     }
 }

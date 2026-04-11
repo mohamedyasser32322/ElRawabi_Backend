@@ -99,6 +99,7 @@ builder.Services.AddScoped<IBuildingService, BuildingService>();
 builder.Services.AddScoped<IApartmentService, ApartmentService>();
 builder.Services.AddScoped<IBuildingTimeLineService, BuildingTimeLineService>();
 builder.Services.AddScoped<IClientDashboardService, ClientDashboardService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 var app = builder.Build();
 
