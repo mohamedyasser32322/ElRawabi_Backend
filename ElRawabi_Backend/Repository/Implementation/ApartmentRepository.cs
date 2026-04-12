@@ -8,6 +8,7 @@ namespace ElRawabi_Backend.Repository.Implementation
     public class ApartmentRepository : IApartmentRepository
     {
         private readonly ElRawabiDbContext _context;
+
         public ApartmentRepository(ElRawabiDbContext context)
         {
             _context = context;
@@ -15,19 +16,51 @@ namespace ElRawabi_Backend.Repository.Implementation
 
         public async Task<List<Apartment>> GetAllAsync()
         {
-            return await _context.Apartments.Where(a => !a.IsDeleted).ToListAsync();
+            return await _context.Apartments
+                .Include(a => a.Client)
+                .Include(a => a.Floor)
+                    .ThenInclude(f => f.Building)
+                        .ThenInclude(b => b.Project)
+                .Where(a => !a.IsDeleted)
+                .ToListAsync();
         }
 
         public async Task<Apartment?> GetByIdAsync(int id)
         {
-            return await _context.Apartments.FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
+            return await _context.Apartments
+                .Include(a => a.Client)
+                .Include(a => a.Floor)
+                    .ThenInclude(f => f.Building)
+                        .ThenInclude(b => b.Project)
+                .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted);
+        }
+        public async Task<List<Apartment>> GetApartmentsByFloorIdAsync(int floorId)
+        {
+            return await _context.Apartments
+                .Include(a => a.Client)
+                .Where(a => a.FloorId == floorId && !a.IsDeleted)
+                .ToListAsync();
         }
 
-        public async Task<Apartment?> GetByApartmentNumberAsync(string apartmentNumber ,int buildingId)
+        // ✅ تم التعديل: التحقق من تكرار الشقة في نفس الدور
+        public async Task<Apartment?> GetByApartmentNumberAndFloorIdAsync(string apartmentNumber, int floorId)
         {
-            return await _context.Apartments.FirstOrDefaultAsync(a => a.ApartmentNumber == apartmentNumber
-            && a.BuildingId == buildingId
-            && !a.IsDeleted);
+            return await _context.Apartments
+                .FirstOrDefaultAsync(a => a.ApartmentNumber == apartmentNumber && a.FloorId == floorId && !a.IsDeleted);
+        }
+
+        public async Task<Apartment> AddAsync(Apartment apartment)
+        {
+            await _context.Apartments.AddAsync(apartment);
+            await _context.SaveChangesAsync();
+            return apartment;
+        }
+
+        public async Task<Apartment> UpdateAsync(Apartment apartment)
+        {
+            _context.Apartments.Update(apartment);
+            await _context.SaveChangesAsync();
+            return apartment;
         }
 
         public async Task<int> GetCountAsync()
@@ -35,40 +68,33 @@ namespace ElRawabi_Backend.Repository.Implementation
             return await _context.Apartments.CountAsync(a => !a.IsDeleted);
         }
 
-        public async Task<Apartment> AddAsync(Apartment Apartment) 
-        {
-            await _context.Apartments.AddAsync(Apartment);
-            await _context.SaveChangesAsync();
-            return Apartment;
-        }
-
-        public async Task<Apartment> UpdateAsync(Apartment Apartment)
-        {
-            _context.Apartments.Update(Apartment);
-            await _context.SaveChangesAsync();
-            return Apartment;
-        }
-            
-        public async Task<Apartment?> GetApartmentWithDetailsAsync(int apartmentId)
+        // ✅ جديد: جلب شقق عميل معين للداشبورد مع كل البيانات المرتبطة
+        public async Task<List<Apartment>> GetApartmentsByClientIdAsync(int clientId)
         {
             return await _context.Apartments
-                .AsNoTracking()
+                .Where(a => a.ClientId == clientId && !a.IsDeleted)
                 .Include(a => a.Client)
-                .Include(a => a.Building)
-                    .ThenInclude(b => b.Project)
-                .Include(a => a.Building.buildingTimeLines)
-                .FirstOrDefaultAsync(a => a.Id == apartmentId);
+                .Include(a => a.Floor)
+                .ThenInclude(f => f.Building)
+                .ThenInclude(b => b.Project)
+                .Include(a => a.Floor)
+                .ThenInclude(f => f.Building)
+                .ThenInclude(b => b.buildingTimeLines)
+                .ToListAsync();
         }
 
-        public async Task<Apartment?> GetApartmentByEmailAsync(string email)
+        public async Task<List<Apartment>> GetApartmentsByUserEmailAsync(string email)
         {
             return await _context.Apartments
-                .AsNoTracking()
+                .Where(a => a.Client.Email == email && !a.IsDeleted)
                 .Include(a => a.Client)
-                .Include(a => a.Building)
-                    .ThenInclude(b => b.Project)
-                .Include(a => a.Building.buildingTimeLines.OrderBy(bt => bt.Stage))
-                .FirstOrDefaultAsync(a => a.Client.Email == email);
+                .Include(a => a.Floor)
+                .ThenInclude(f => f.Building)
+                .ThenInclude(b => b.Project)
+                .Include(a => a.Floor)
+                .ThenInclude(f => f.Building)
+                .ThenInclude(b => b.buildingTimeLines)
+                .ToListAsync();
         }
     }
 }

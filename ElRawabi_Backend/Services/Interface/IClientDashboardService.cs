@@ -4,6 +4,7 @@ namespace ElRawabi_Backend.Services.Interface
 {
     public interface IClientDashboardService
     {
-        Task<ClientHeaderDTO?> GetClientDashboardHeaderByEmailAsync(string email);
+        Task<List<ClientHeaderDTO>> GetClientHeader(int clientId);
+        Task<List<ClientHeaderDTO>> GetClientDashboardHeaderByEmailAsync(string email);
     }
 }

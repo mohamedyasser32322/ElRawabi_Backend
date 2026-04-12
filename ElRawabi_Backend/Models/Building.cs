@@ -15,7 +15,7 @@ namespace ElRawabi_Backend.Models
         public DateTime DeliveryDate { get; set; }
         public Project Project { get; set; }
         public int ProjectId { get; set; }
-        public ICollection<Apartment> Apartments { get; set; } = new List<Apartment>();
+        public ICollection<Floor> Floors { get; set; } = new List<Floor>();
         public ICollection<BuildingTimeLine> buildingTimeLines { get; set; } = new List<BuildingTimeLine>();
         public ICollection<BuildingImg> BuildingImgs { get; set; } = new List<BuildingImg>();
     }

@@ -11,10 +11,19 @@ namespace ElRawabi_Backend.Services.Implmentation
     public class BuildingService : IBuildingService
     {
         private readonly IBuildingRepository _buildingRepository;
+        private readonly IBuildingImgRepository _buildingImgRepository;
+        private readonly IImageService _imageService;
         private readonly IMapper _mapper;
-        public BuildingService(IBuildingRepository buildingRepository, IMapper mapper)
+
+        public BuildingService(
+            IBuildingRepository buildingRepository,
+            IBuildingImgRepository buildingImgRepository,
+            IImageService imageService,
+            IMapper mapper)
         {
             _buildingRepository = buildingRepository;
+            _buildingImgRepository = buildingImgRepository;
+            _imageService = imageService;
             _mapper = mapper;
         }
 
@@ -24,36 +33,39 @@ namespace ElRawabi_Backend.Services.Implmentation
             return _mapper.Map<List<AllBuildingsDto>>(buildings);
         }
 
-        public async Task<BuildingReadDto> GetBuildingByIdAsync(int id)
+        public async Task<BuildingReadDto?> GetBuildingByIdAsync(int id)
         {
             var building = await _buildingRepository.GetByIdAsync(id);
-            if (building != null)
-            {
-                return _mapper.Map<BuildingReadDto>(building);
-            }
-            else
-            {
-                return null;
-            }
+            return building != null ? _mapper.Map<BuildingReadDto>(building) : null;
         }
 
         public async Task<int> GetBuildingsCountAsync()
         {
-            var buildingsCount = await _buildingRepository.GetCountAsync();
-            return buildingsCount;
+            return await _buildingRepository.GetCountAsync();
         }
 
-        public async Task<string> AddBuildingAsync(BuildingCreateDto buildingCreateDto)
+        public async Task<string> AddBuildingAsync(BuildingCreateDto dto, List<IFormFile>? images = null)
         {
-            var exictingBuilding = await _buildingRepository.GetByBuildingNumberAsync(
-            buildingCreateDto.BuildingNumber,
-            buildingCreateDto.ProjectId
-            );
+            var existing = await _buildingRepository.GetByBuildingNumberAsync(dto.BuildingNumber, dto.ProjectId);
+            if (existing != null) return "هذه العمارة موجودة بالفعل في هذا المشروع";
 
-            if (exictingBuilding != null) return "Building Already Exists in this Project";
-
-            var building = _mapper.Map<Building>(buildingCreateDto);
+            var building = _mapper.Map<Building>(dto);
             await _buildingRepository.AddAsync(building);
+
+            // رفع الصور إذا وُجدت
+            if (images != null && images.Count > 0)
+            {
+                var urls = await _imageService.UploadImagesAsync(images, "buildings");
+                foreach (var url in urls)
+                {
+                    await _buildingImgRepository.AddAsync(new BuildingImg
+                    {
+                        ImgUrl = url,
+                        BuildingId = building.Id
+                    });
+                }
+            }
+
             return "Success";
         }
 
@@ -63,37 +75,58 @@ namespace ElRawabi_Backend.Services.Implmentation
             return _mapper.Map<List<AllBuildingsDto>>(buildings);
         }
 
-
-        public async Task<BuildingReadDto> UpdateBuildingAsync(BuildingUpdateDto buildingUpdateDto)
+        public async Task<BuildingReadDto> UpdateBuildingAsync(BuildingUpdateDto dto, List<IFormFile>? newImages = null)
         {
-            var building = await _buildingRepository.GetByIdAsync(buildingUpdateDto.Id);
-            if (building == null)
+            var building = await _buildingRepository.GetByIdAsync(dto.Id);
+            if (building == null) throw new Exception("العمارة غير موجودة");
+
+            _mapper.Map(dto, building);
+            building.LastUpdatedAt = DateTime.UtcNow;
+            await _buildingRepository.UpdateAsync(building);
+
+            // رفع صور جديدة إذا وُجدت
+            if (newImages != null && newImages.Count > 0)
             {
-                throw new Exception("Building Not Exists");
+                var urls = await _imageService.UploadImagesAsync(newImages, "buildings");
+                foreach (var url in urls)
+                {
+                    await _buildingImgRepository.AddAsync(new BuildingImg
+                    {
+                        ImgUrl = url,
+                        BuildingId = building.Id
+                    });
+                }
             }
-            else
-            {
-                _mapper.Map(buildingUpdateDto, building);
-                building.LastUpdatedAt = DateTime.UtcNow;
-                await _buildingRepository.UpdateAsync(building);
-                return _mapper.Map<BuildingReadDto>(building);
-            }
+
+            return _mapper.Map<BuildingReadDto>(building);
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
             var building = await _buildingRepository.GetByIdAsync(id);
-            if (building != null)
-            {
-                building.IsDeleted = true;
-                building.LastUpdatedAt = DateTime.UtcNow;
-                await _buildingRepository.UpdateAsync(building);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            if (building == null) return false;
+
+            building.IsDeleted = true;
+            building.LastUpdatedAt = DateTime.UtcNow;
+            await _buildingRepository.UpdateAsync(building);
+            return true;
+        }
+
+        public async Task<BuildingImg?> GetBuildingImageByIdAsync(int imageId)
+        {
+            return await _buildingImgRepository.GetByIdAsync(imageId);
+        }
+
+        public async Task<bool> DeleteBuildingImageAsync(int imageId)
+        {
+            var img = await _buildingImgRepository.GetByIdAsync(imageId);
+            if (img == null) return false;
+
+            await _imageService.DeleteImageAsync(img.ImgUrl!);
+            img.IsDeleted = true;
+            img.LastUpdatedAt = DateTime.UtcNow;
+            await _buildingImgRepository.UpdateAsync(img);
+            return true;
         }
     }
 }

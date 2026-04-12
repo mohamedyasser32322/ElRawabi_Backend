@@ -6,11 +6,12 @@ namespace ElRawabi_Backend.Repository.Interfaces
     {
         Task<List<Apartment>> GetAllAsync();
         Task<Apartment?> GetByIdAsync(int id);
-        Task<Apartment?> GetByApartmentNumberAsync(string apartmentNumber , int buildingId);
+        Task<List<Apartment>> GetApartmentsByFloorIdAsync(int floorId);
+        Task<Apartment?> GetByApartmentNumberAndFloorIdAsync(string apartmentNumber, int floorId);
+        Task<Apartment> AddAsync(Apartment apartment);
+        Task<Apartment> UpdateAsync(Apartment apartment);
         Task<int> GetCountAsync();
-        Task<Apartment> AddAsync(Apartment Apartment);
-        Task<Apartment> UpdateAsync(Apartment Apartment);
-        Task<Apartment?> GetApartmentWithDetailsAsync(int apartmentId);
-        Task<Apartment?> GetApartmentByEmailAsync(string email);
+        Task<List<Apartment>> GetApartmentsByClientIdAsync(int clientId);
+        Task<List<Apartment>> GetApartmentsByUserEmailAsync(string email);
     }
 }

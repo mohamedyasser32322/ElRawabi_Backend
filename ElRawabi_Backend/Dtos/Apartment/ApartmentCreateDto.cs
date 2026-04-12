@@ -8,15 +8,15 @@ namespace ElRawabi_Backend.Dtos.Apartment
         [Required, StringLength(10)]
         public string? ApartmentNumber { get; set; }
         [Required]
-        public int FloorNumber { get; set; }
+        public int FloorId { get; set; }
         [Required]
         public decimal Area { get; set; }
         [Required]
         public decimal PricePerMeter { get; set; }
         [Required]
-        public bool IsSold { get; set; } = false;
+        public ApartmentStatus Status { get; set; } = ApartmentStatus.Available;
         [Required]
         public ApartmentType Type { get; set; }
-        public int? BuildingId { get; set; }
+        public int? ClientId { get; set; }
     }
 }

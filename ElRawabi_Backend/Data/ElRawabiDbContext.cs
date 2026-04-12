@@ -10,6 +10,7 @@ namespace ElRawabi_Backend.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<Building> Buildings { get; set; }
+        public DbSet<Floor> Floors { get; set; }
         public DbSet<Apartment> Apartments { get ; set; }
         public DbSet<BuildingTimeLine> BuildingsTimeLine { get; set; }
         public DbSet<BuildingImg> BuildingImgs { get; set; }
@@ -39,10 +40,15 @@ namespace ElRawabi_Backend.Data
                 .WithMany(p => p.Buildings)
                 .HasForeignKey(b => b.ProjectId);
 
+            modelBuilder.Entity<Floor>()
+                .HasOne(f => f.Building)
+                .WithMany(b => b.Floors)
+                .HasForeignKey(f => f.BuildingId);
+
             modelBuilder.Entity<Apartment>()
-                .HasOne(a => a.Building)
-                .WithMany(b => b.Apartments)
-                .HasForeignKey(a => a.BuildingId);
+                .HasOne(a => a.Floor)
+                .WithMany(f => f.Apartments)
+                .HasForeignKey(a => a.FloorId);
 
             modelBuilder.Entity<Apartment>()
                .Property(a => a.Area)

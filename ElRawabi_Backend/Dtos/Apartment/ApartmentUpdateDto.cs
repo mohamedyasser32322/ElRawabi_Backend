@@ -13,7 +13,7 @@ namespace ElRawabi_Backend.Dtos.Apartment
         public decimal PricePerMeter { get; set; }
         public bool IsSold { get; set; }
         public ApartmentType Type { get; set; }
-        public int BuildingId { get; set; }
+        public ApartmentStatus Status { get; set; }
         public int? ClientId { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using ElRawabi_Backend.Dtos.Buildings;
 using ElRawabi_Backend.Dtos.Projects;
+using ElRawabi_Backend.Models;
 
 namespace ElRawabi_Backend.Services.Interface
 {
@@ -8,9 +9,11 @@ namespace ElRawabi_Backend.Services.Interface
         Task<List<AllBuildingsDto>> GetAllBuildingsAsync();
         Task<BuildingReadDto> GetBuildingByIdAsync(int id);
         Task<int> GetBuildingsCountAsync();
-        Task<string> AddBuildingAsync(BuildingCreateDto buildingCreateDto);
+        Task<string> AddBuildingAsync(BuildingCreateDto dto, List<IFormFile>? images = null);
         Task<List<AllBuildingsDto>> GetBuildingsByProjectIdAsync(int projectId);
-        Task<BuildingReadDto> UpdateBuildingAsync(BuildingUpdateDto buildingUpdateDto);
+        Task<BuildingReadDto> UpdateBuildingAsync(BuildingUpdateDto dto, List<IFormFile>? newImages = null);
         Task<bool> DeleteAsync(int id);
+        Task<BuildingImg?> GetBuildingImageByIdAsync(int imageId);
+        Task<bool> DeleteBuildingImageAsync(int imageId);
     }
 }

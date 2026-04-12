@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ElRawabi_Backend.Dtos.Floor;
+using System.ComponentModel.DataAnnotations;
 
 namespace ElRawabi_Backend.Dtos.Buildings
 {
@@ -11,5 +12,8 @@ namespace ElRawabi_Backend.Dtos.Buildings
         public DateTime LastUpdatedAt { get; set; }
         public DateTime DeliveryDate { get; set; }
         public int ProjectId { get; set; }
+        public string? ProjectName { get; set; }
+        public List<FloorReadDto> Floors { get; set; } = new List<FloorReadDto>();
+        public List<string> ImageUrls { get; set; } = new List<string>();
     }
 }

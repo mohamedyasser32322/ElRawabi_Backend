@@ -84,7 +84,7 @@ builder.Services.AddCors(options =>
 // Helpers Scoped
 builder.Services.AddScoped<PasswordHelper>();
 builder.Services.AddScoped<JwtHelper>();
-
+builder.Services.AddHttpContextAccessor();
 // Repos & Services Scope
 builder.Services.AddScoped<IUserRepository,UserRepository>();
 builder.Services.AddScoped<IProjectRepository,ProjectRepository>();
@@ -92,6 +92,8 @@ builder.Services.AddScoped<IBuildingRepository,BuildingRepository>();
 builder.Services.AddScoped<IApartmentRepository,ApartmentRepository>();
 builder.Services.AddScoped<IBuildingImgRepository, BuildingImgRepository>();
 builder.Services.AddScoped<IBuildingTimeLineRepository,BuildingTimeLineRepository>();
+builder.Services.AddScoped<IFloorRepository,FloorRepository>();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
@@ -100,6 +102,9 @@ builder.Services.AddScoped<IApartmentService, ApartmentService>();
 builder.Services.AddScoped<IBuildingTimeLineService, BuildingTimeLineService>();
 builder.Services.AddScoped<IClientDashboardService, ClientDashboardService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IImageService, ImageService>();
+
+
 
 var app = builder.Build();
 

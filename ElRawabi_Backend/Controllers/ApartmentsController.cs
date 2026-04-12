@@ -60,7 +60,7 @@ namespace ElRawabi_Backend.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _apartmentService.DeleteAsync(id);
+            var result = await _apartmentService.DeleteApartmentAsync(id);
             return result ? Ok("Apartment Deleted Successfully") : NotFound("Apartment Not Found");
         }
     }
