@@ -61,13 +61,18 @@ namespace ElRawabi_Backend.Controllers
         }
 
         [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword([FromBody] string email)
-        {
-            var result = await _authService.ForgotPasswordAsync(email);
-            if (!result) return NotFound(new { message = "Email not found" });
-
-            return Ok(new { message = "Reset link sent to your email" });
-        }
+public async Task<IActionResult> ForgotPassword([FromBody] string email)
+{
+    try {
+        var result = await _authService.ForgotPasswordAsync(email);
+        if (!result) return NotFound(new { message = "Email not found" });
+        return Ok(new { message = "Reset link sent to your email" });
+    }
+    catch (Exception ex) {
+        // إرسال تفاصيل الخطأ للفرونت إند للتشخيص
+        return StatusCode(500, new { message = "Error sending email", details = ex.Message });
+    }
+}
 
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromQuery] string token, [FromBody] string newPassword)

@@ -10,5 +10,6 @@ namespace ElRawabi_Backend.Repository.Interfaces
         Task<int> GetCountAsync();
         Task<User> AddAsync(User User);
         Task<User> UpdateAsync(User User);
+        Task<User?> GetByResetTokenAsync(string token);
     }
 }

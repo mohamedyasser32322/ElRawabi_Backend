@@ -85,33 +85,48 @@ namespace ElRawabi_Backend.Services.Implmentation
             var user = await _userRepository.GetByEmailAsync(email);
             if (user == null) return false;
 
-            // إنشاء Token فريد لاستعادة كلمة المرور
+            // إنشاء Token فريد
             var token = Guid.NewGuid().ToString();
             user.PasswordResetToken = token;
-            user.ResetTokenExpires = DateTime.UtcNow.AddHours(1); // صالح لمدة ساعة
+            user.ResetTokenExpires = DateTime.UtcNow.AddHours(1);
 
             await _userRepository.UpdateAsync(user);
 
-            // إرسال رابط الاستعادة للإيميل
-            var resetLink = $"{_configuration["AppUrl"]}/reset-password?token={token}";
+            // بناء الرابط الصحيح (تأكد من وجود .html)
+            var resetLink = $"{_configuration["AppUrl"]}/ResetPassword.html?token={token}";
+
+            // نص الإيميل بتنسيق HTML شيك
+            var emailBody = $@"
+        <div style='font-family: Arial, sans-serif; direction: rtl; text-align: right; padding: 20px; border: 1px solid #eee; border-radius: 10px;'>
+            <h2 style='color: #2c3e50;'>استعادة كلمة المرور</h2>
+            <p>أهلاً بك، لقد تلقينا طلباً لإعادة تعيين كلمة المرور الخاصة بحسابك.</p>
+            <p>يرجى الضغط على الزر أدناه لتغيير كلمة المرور (الرابط صالح لمدة ساعة واحدة)</p>
+            <div style='text-align: center; margin: 30px 0;'>
+                <a href='{resetLink}' style='background-color: #27ae60; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;'>تغيير كلمة المرور</a>
+            </div>
+            <p style='color: #7f8c8d; font-size: 12px;'>إذا لم تطلب هذا التغيير، يمكنك تجاهل هذا الإيميل بأمان.</p>
+            <hr style='border: 0; border-top: 1px solid #eee;'>
+            <p style='font-size: 12px; color: #bdc3c7;'>فريق عمل الروابي</p>
+        </div>";
+
             await _emailService.SendEmailAsync(
                 user.Email!,
-                "Reset Your Password",
-                $"Click here to reset your password: <a href='{resetLink}'>Reset Password</a>"
+                "استعادة كلمة المرور - الروابي",
+                emailBody
             );
 
             return true;
         }
 
+
         public async Task<bool> ResetPasswordAsync(string token, string newPassword)
         {
-            // البحث عن المستخدم بالـ Token والتأكد إنه مخلصش وقته
-            var users = await _userRepository.GetAllAsync();
-            var user = users.FirstOrDefault(u => u.PasswordResetToken == token && u.ResetTokenExpires > DateTime.UtcNow);
+            // البحث المباشر عن المستخدم بالتوكن والتأكد من عدم انتهاء الصلاحية
+            var user = await _userRepository.GetByResetTokenAsync(token);
 
-            if (user == null) return false;
+            if (user == null || user.ResetTokenExpires < DateTime.UtcNow) return false;
 
-            // تحديث كلمة المرور وتصفير الـ Token
+            // تحديث كلمة المرور وتصفير التوكن
             user.PasswordHash = _passwordHelper.HashPassword(newPassword);
             user.PasswordResetToken = null;
             user.ResetTokenExpires = null;

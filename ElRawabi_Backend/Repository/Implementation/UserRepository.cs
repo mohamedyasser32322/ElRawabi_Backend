@@ -45,5 +45,10 @@ namespace ElRawabi_Backend.Repository.Implementation
             await _context.SaveChangesAsync();
             return User;
         }
+
+        public async Task<User?> GetByResetTokenAsync(string token)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.PasswordResetToken == token && !u.IsDeleted);
+        }
     }
 }
