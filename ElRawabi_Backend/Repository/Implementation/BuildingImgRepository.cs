@@ -20,8 +20,9 @@ namespace ElRawabi_Backend.Repository.Implementation
 
         public async Task<BuildingImg?> GetByIdAsync(int id)
         {
-            return await _context.BuildingImgs.FirstOrDefaultAsync(bi => bi.Id == id);
+            return await _context.BuildingImgs.FirstOrDefaultAsync(bi => bi.Id == id && !bi.IsDeleted);
         }
+
 
 
         public async Task<BuildingImg> AddAsync(BuildingImg BuildingImg)

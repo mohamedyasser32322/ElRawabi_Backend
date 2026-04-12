@@ -71,7 +71,8 @@ namespace ElRawabi_Backend.Migrations
             migrationBuilder.Sql("UPDATE Apartments SET FloorId = (SELECT TOP 1 Id FROM Floors WHERE Floors.BuildingId = Apartments.FloorId)");
 
             // 3. تحويل حالة الشقق القديمة إلى "متاح" (رقم 1) لأننا قمنا بعمل Rename لعمود FloorNumber إلى Status
-            migrationBuilder.Sql("UPDATE Apartments SET Status = 1");
+            migrationBuilder.Sql("UPDATE Apartments SET Status = CASE WHEN IsSold = 1 THEN 3 ELSE 1 END");
+
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Apartments_Floors_FloorId",

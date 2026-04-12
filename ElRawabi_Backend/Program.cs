@@ -103,6 +103,8 @@ builder.Services.AddScoped<IBuildingTimeLineService, BuildingTimeLineService>();
 builder.Services.AddScoped<IClientDashboardService, ClientDashboardService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IFloorService, FloorService>();
+
 
 
 
@@ -121,6 +123,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseStaticFiles();
 
 app.MapControllers();
 
